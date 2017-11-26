@@ -61,7 +61,7 @@ function bindFunction (fn) {
     let args = Array.from(arguments);
     args.splice(0, 1);
     return function() {
-        return fn.apply(this, args);
+        return fn.apply(null, args);
     }
 }
 export {
