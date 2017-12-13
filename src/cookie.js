@@ -39,8 +39,44 @@ let addValueInput = homeworkContainer.querySelector('#add-value-input');
 let addButton = homeworkContainer.querySelector('#add-button');
 let listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
+import { createCookie, deleteCookie } from './index';
+
+const getCookies = () => {
+    let cookies = {};
+    if (!!document.cookie) {
+        document.cookie.split(';').map(e => {
+            let [name, value] = e.split('=');
+            cookies[name.trim()] = value;
+        });
+        return cookies;
+    }
+};
+
+const updateCookies = filter => {
+    let cookies = getCookies();
+    filter = filterNameInput.value;
+    listTable.innerHTML = '';
+    for (let cookie in cookies) {
+        if (!filter || ~cookie.indexOf(filter) || ~cookies[cookie].indexOf(filter)) {
+            let row = listTable.insertRow(-1);
+            let btnDeleteCookie = document.createElement('button');
+            btnDeleteCookie.textContent = 'Удалить';
+            btnDeleteCookie.addEventListener('click', () => {
+                deleteCookie(cookie);
+                updateCookies();
+            });
+            row.insertCell(0).textContent = cookie;
+            row.insertCell(1).textContent = cookies[cookie];
+            row.insertCell(2).appendChild(btnDeleteCookie);
+        }
+    }
+};
+
+filterNameInput.addEventListener('keyup', () => {
+    updateCookies();
 });
 
 addButton.addEventListener('click', () => {
+    createCookie(addNameInput.value, addValueInput.value);
+    updateCookies();
 });
